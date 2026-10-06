@@ -11,68 +11,75 @@
     <!-- Dynamic Glowing Canvas Background -->
     <canvas
       id="webgl-canvas"
-      class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none"
+      class="fixed inset-0 w-full h-full -z-10 pointer-events-none"
     ></canvas>
 
     <!-- UI Overlay Sections (3 Screens: 300vh total) -->
     <main class="relative z-10 w-full pointer-events-none">
-      <!-- Section 1: Greeting (Face Close-Up) -->
-      <section class="h-screen flex items-center ml-48 text-center p-6">
-        <div class="max-w-3xl pointer-events-auto">
+      <!-- Section 1: Hero / Greeting -->
+      <section
+        class="min-h-screen w-full flex lg:items-center justify-center lg:justify-start px-6 sm:px-12 md:px-16 lg:px-24 py-12"
+      >
+        <div class="w-full max-w-xl text-center pointer-events-auto">
           <div
-            class="inline-flex justify-center items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold tracking-wider text-emerald-300 uppercase mb-4 shadow-[0_0_20px_rgba(52,211,153,0.2)]"
+            class="inline-flex justify-center items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3.5 py-1.5 text-[11px] sm:text-xs font-semibold tracking-wider text-emerald-300 uppercase mb-4 sm:mb-6 shadow-[0_0_20px_rgba(52,211,153,0.2)]"
           >
             <span
               class="h-2 w-2 rounded-full bg-emerald-400 animate-ping"
             ></span>
-            Founder/CEO & Principal Scientist
+            Founder/CEO &amp; Principal Scientist
           </div>
 
           <h1
-            class="text-6xl md:text-8xl font-black tracking-tight text-white mb-3 drop-shadow-2xl"
+            class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white mb-4 drop-shadow-2xl leading-[1.1] relative"
           >
             Hi, I'm
             <span
               class="bg-linear-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent"
               >Anbu</span
             >
-            👋
+            <span class="absolute lg:-right-32 lg:-top-10">👋</span>
           </h1>
 
           <p
-            class="text-xl md:text-2xl text-slate-300 mb-6 font-light drop-shadow"
+            class="text-base sm:text-xl md:text-2xl text-slate-300/90 mb-6 sm:mb-8 font-light drop-shadow leading-relaxed max-w-xl mx-auto lg:mx-0"
           >
-            Engineering scalable web applications & interactive digital
+            Engineering scalable web applications &amp; interactive digital
             experiences.
           </p>
 
           <p
-            class="text-xs tracking-widest text-slate-400 uppercase animate-bounce mt-4 pointer-events-auto"
+            class="text-[10px] sm:text-xs tracking-widest text-slate-400 uppercase animate-bounce pointer-events-auto"
           >
             Scroll down to explore &darr;
           </p>
         </div>
       </section>
 
-      <!-- Section 2: About (Avatar shifts Right, Content on Left) -->
-      <section class="h-screen flex items-center justify-start p-8 md:p-24">
+      <!-- Section 2: About (Model on Right on desktop, content anchored Left) -->
+      <section
+        class="min-h-screen w-full flex items-center justify-center md:justify-start px-6 sm:px-12 md:px-16 lg:px-24 py-12"
+      >
         <div
-          class="max-w-lg rounded-3xl border border-white/10 bg-slate-900/60 p-8 backdrop-blur-xl shadow-2xl pointer-events-auto transform transition duration-500 hover:border-teal-400/40 hover:shadow-teal-500/10"
+          class="w-full max-w-md sm:max-w-lg rounded-3xl border border-white/10 bg-slate-900/75 sm:bg-slate-900/60 p-6 sm:p-8 md:p-10 backdrop-blur-xl shadow-2xl pointer-events-auto transform transition duration-500 hover:border-teal-400/40 hover:shadow-teal-500/10"
         >
-          <span class="text-teal-400 font-mono text-sm tracking-wider uppercase"
+          <span
+            class="text-teal-400 font-mono text-xs sm:text-sm tracking-wider uppercase"
             >01. About Me</span
           >
           <h2
-            class="text-4xl md:text-5xl font-black text-white mt-2 mb-4 tracking-tight"
+            class="text-3xl sm:text-4xl md:text-5xl font-black text-white mt-2 mb-3 sm:mb-4 tracking-tight leading-tight"
           >
             Building From Scratch.
           </h2>
-          <p class="text-slate-300 leading-relaxed mb-4 text-sm md:text-base">
+          <p
+            class="text-slate-300 leading-relaxed mb-5 text-sm sm:text-base font-light"
+          >
             From system architecture to modern reactive user interfaces.
             Passionate about empowering engineering minds and turning complex
             problems into elegant web products.
           </p>
-          <div class="flex flex-wrap gap-2 pt-2">
+          <div class="flex flex-wrap gap-2 pt-1">
             <span
               class="px-3 py-1 text-xs rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-mono"
               >Tailwind CSS</span
@@ -89,36 +96,40 @@
         </div>
       </section>
 
-      <!-- Section 3: Contact (Avatar shifts Left, Content on Right) -->
+      <!-- Section 3: Contact (Model on Left on desktop, content anchored Right) -->
       <section
-        class="h-screen flex items-center justify-end p-8 md:p-24 text-right"
+        class="min-h-screen w-full flex items-center justify-center md:justify-end px-6 sm:px-12 md:px-16 lg:px-24 py-12"
       >
         <div
-          class="max-w-lg rounded-3xl border border-white/10 bg-slate-900/60 p-8 backdrop-blur-xl shadow-2xl pointer-events-auto transform transition duration-500 hover:border-indigo-400/40 hover:shadow-indigo-500/10 text-left"
+          class="w-full max-w-md sm:max-w-lg rounded-3xl border border-white/10 bg-slate-900/75 sm:bg-slate-900/60 p-6 sm:p-8 md:p-10 backdrop-blur-xl shadow-2xl pointer-events-auto transform transition duration-500 hover:border-indigo-400/40 hover:shadow-indigo-500/10 text-left"
         >
           <span
-            class="text-indigo-400 font-mono text-sm tracking-wider uppercase"
+            class="text-indigo-400 font-mono text-xs sm:text-sm tracking-wider uppercase"
             >02. Connect</span
           >
           <h2
-            class="text-4xl md:text-5xl font-black text-white mt-2 mb-4 tracking-tight"
+            class="text-3xl sm:text-4xl md:text-5xl font-black text-white mt-2 mb-3 sm:mb-4 tracking-tight leading-tight"
           >
             Let's Collaborate.
           </h2>
-          <p class="text-slate-300 leading-relaxed mb-6 text-sm md:text-base">
+          <p
+            class="text-slate-300 leading-relaxed mb-6 text-sm sm:text-base font-light"
+          >
             Whether it's open-source initiatives, technical masterclasses, or
             enterprise software development.
           </p>
-          <div class="flex flex-col sm:flex-row gap-3">
+          <div class="flex flex-col sm:flex-row gap-3 pt-1">
             <a
               href="mailto:hello@cyberdude.net"
-              class="flex-1 text-center rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-3 font-semibold text-slate-950 transition hover:brightness-110 shadow-lg shadow-teal-500/20"
+              class="w-full sm:w-auto flex-1 text-center rounded-xl bg-linear-to-r from-emerald-500 to-teal-600 px-6 py-3.5 font-semibold text-slate-950 transition hover:brightness-110 shadow-lg shadow-teal-500/20 text-sm sm:text-base active:scale-98"
             >
               Send Email
             </a>
             <a
-              href="#"
-              class="flex-1 text-center rounded-xl border border-white/10 bg-white/5 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
+              href="https://github.com/anbuselvan-annamalai"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="w-full sm:w-auto flex-1 text-center rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 font-semibold text-white transition hover:bg-white/10 text-sm sm:text-base active:scale-98"
             >
               GitHub Profile
             </a>

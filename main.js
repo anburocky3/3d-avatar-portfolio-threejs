@@ -6,14 +6,19 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 const canvas = document.querySelector("#webgl-canvas");
 const scene = new THREE.Scene();
 
+// Responsive Device Check
+const isMobile = () => window.innerWidth < 768;
+const isTablet = () => window.innerWidth >= 768 && window.innerWidth < 1024;
+
 const camera = new THREE.PerspectiveCamera(
-  35,
+  isMobile() ? 48 : isTablet() ? 40 : 35,
   window.innerWidth / window.innerHeight,
   0.1,
   100,
 );
+
 // Framed comfortably for face and upper torso
-camera.position.set(0, 1.35, 1.85);
+camera.position.set(0, 1.35, isMobile() ? 2.1 : 1.85);
 
 const renderer = new THREE.WebGLRenderer({
   canvas,
@@ -74,9 +79,8 @@ let rightLid = null;
 
 // Procedural Eyelid Builder
 function createProceduralEyelids(parentHead) {
-  // Curved hemisphere geometry tailored to wrap over eye globes
   const lidGeo = new THREE.SphereGeometry(
-    0.019, // radius
+    0.019,
     16,
     16,
     0,
@@ -85,7 +89,6 @@ function createProceduralEyelids(parentHead) {
     Math.PI * 0.5,
   );
 
-  // Matches the avatar's face skin tone
   const lidMat = new THREE.MeshStandardMaterial({
     color: 0x985d43, // warm brown/tan skin tone
     roughness: 0.65,
@@ -96,15 +99,12 @@ function createProceduralEyelids(parentHead) {
   leftLid = new THREE.Mesh(lidGeo, lidMat);
   rightLid = new THREE.Mesh(lidGeo, lidMat);
 
-  // Positioned right over the upper eye sockets relative to Head bone center
   leftLid.position.set(0.031, 0.076, 0.076);
   rightLid.position.set(-0.031, 0.076, 0.076);
 
-  // Rotate curved dome downwards so scaling Y extends like closing eyelids
   leftLid.rotation.x = THREE.MathUtils.degToRad(35);
   rightLid.rotation.x = THREE.MathUtils.degToRad(35);
 
-  // Hidden at start (scale.y = 0)
   leftLid.scale.set(1.05, 0.001, 1.05);
   rightLid.scale.set(1.05, 0.001, 1.05);
 
@@ -118,8 +118,9 @@ const modelPath = `${import.meta.env.BASE_URL}anbu-avatar.glb`;
 loader.load(modelPath, (gltf) => {
   avatar = gltf.scene;
 
-  // Hero section setup: Placed on the right side and elevated
-  avatar.position.set(0.85, -0.32, 0);
+  // Initial placement adapted for mobile vs desktop
+  const initX = isMobile() ? 0 : 0.85;
+  avatar.position.set(initX, -0.32, 0);
 
   avatar.traverse((node) => {
     if (node.isBone) {
@@ -189,8 +190,7 @@ function updateBlinking() {
   }
 
   if (isBlinking && leftLid && rightLid) {
-    blinkProgress += 0.16; // Blink animation speed
-    // Sine wave creates a natural 0 -> 1 -> 0 curve
+    blinkProgress += 0.16;
     const weight = Math.sin(Math.min(blinkProgress, 1) * Math.PI);
 
     const lidScaleY = Math.max(0.001, weight * 1.15);
@@ -201,7 +201,6 @@ function updateBlinking() {
       isBlinking = false;
       leftLid.scale.y = 0.001;
       rightLid.scale.y = 0.001;
-      // Schedule next blink in 2.5 to 5.5 seconds
       nextBlinkTime = now + 2500 + Math.random() * 3000;
     }
   }
@@ -211,7 +210,7 @@ function updateBlinking() {
 let scrollProgress = 0;
 function onScroll() {
   const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-  scrollProgress = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
+  scrollProgress = Math.min(Math.max(window.scrollY / (maxScroll || 1), 0), 1);
 }
 window.addEventListener("scroll", onScroll);
 
@@ -223,8 +222,10 @@ window.addEventListener("mousemove", (event) => {
   mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
 });
 
+// Responsive Resize Handling
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
+  camera.fov = isMobile() ? 48 : isTablet() ? 40 : 35;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
   onScroll();
@@ -249,50 +250,70 @@ function animate() {
   requestAnimationFrame(animate);
   const elapsedTime = clock.getElapsedTime();
 
-  // Gentle starfield drift
   stars.rotation.y = elapsedTime * 0.02;
 
   // Run procedural eyelid blink animation
   updateBlinking();
 
-  // Scroll Interpolation States
-  let targetCamX = 0;
-  let targetCamY = 1.35;
-  let targetCamZ = 1.85;
+  // Responsive camera parameters
+  const mobile = isMobile();
+  const tablet = isTablet();
 
-  let targetLookAtX = 0.35;
-  let targetLookAtY = 1.15;
+  let targetCamX = 0;
+  let targetCamY = mobile ? 1.4 : 1.35;
+  let targetCamZ = mobile ? 2.1 : 1.85;
+
+  let targetLookAtX = mobile ? 0 : 0.35;
+  let targetLookAtY = mobile ? 1.2 : 1.15;
   let targetLookAtZ = 0;
 
-  // Hero Initial State: Model sits on the right side
-  let targetAvatarX = 0.85;
-  let targetAvatarYRot = -0.32;
+  // Initial hero avatar position
+  let targetAvatarX = mobile ? 0 : 0.85;
+  let targetAvatarYRot = mobile ? 0 : -0.32;
 
   if (scrollProgress < 0.45) {
-    // Section 1: Hero (Avatar stays on the right)
+    // Section 1: Hero
     const factor = scrollProgress / 0.45;
     targetCamX = 0;
-    targetCamY = THREE.MathUtils.lerp(1.35, 1.25, factor);
-    targetCamZ = THREE.MathUtils.lerp(1.85, 2.2, factor);
-    targetAvatarX = THREE.MathUtils.lerp(0.85, 0.95, factor);
-    targetAvatarYRot = THREE.MathUtils.lerp(-0.32, -0.4, factor);
-    targetLookAtY = THREE.MathUtils.lerp(1.15, 1.05, factor);
+    targetCamY = THREE.MathUtils.lerp(mobile ? 1.4 : 1.35, 1.25, factor);
+    targetCamZ = THREE.MathUtils.lerp(
+      mobile ? 2.1 : 1.85,
+      mobile ? 2.4 : 2.2,
+      factor,
+    );
+    targetAvatarX = THREE.MathUtils.lerp(
+      mobile ? 0 : 0.85,
+      mobile ? 0 : 0.95,
+      factor,
+    );
+    targetAvatarYRot = THREE.MathUtils.lerp(
+      mobile ? 0 : -0.32,
+      mobile ? 0 : -0.4,
+      factor,
+    );
+    targetLookAtY = THREE.MathUtils.lerp(mobile ? 1.2 : 1.15, 1.05, factor);
   } else if (scrollProgress >= 0.45 && scrollProgress < 0.8) {
-    // Section 2: About (Avatar shifts further right, content card left)
+    // Section 2: About
     const factor = (scrollProgress - 0.45) / 0.35;
     targetCamX = 0;
     targetCamY = 1.2;
-    targetCamZ = THREE.MathUtils.lerp(2.2, 2.4, factor);
-    targetAvatarX = 0.95;
-    targetAvatarYRot = -0.35;
+    targetCamZ = THREE.MathUtils.lerp(
+      mobile ? 2.4 : 2.2,
+      mobile ? 2.6 : 2.4,
+      factor,
+    );
+    targetAvatarX = mobile ? 0 : tablet ? 0.6 : 0.95;
+    targetAvatarYRot = mobile ? 0 : -0.35;
+    targetLookAtX = mobile ? 0 : tablet ? 0.2 : 0.35;
     targetLookAtY = 1.05;
   } else {
-    // Section 3: Contact (Avatar shifts left, content card right)
+    // Section 3: Contact
     targetCamX = 0;
     targetCamY = 1.2;
-    targetCamZ = 2.4;
-    targetAvatarX = -0.2;
-    targetAvatarYRot = 0.35;
+    targetCamZ = mobile ? 2.6 : 2.4;
+    targetAvatarX = mobile ? 0 : tablet ? -0.4 : -0.2;
+    targetAvatarYRot = mobile ? 0 : 0.35;
+    targetLookAtX = mobile ? 0 : -0.2;
     targetLookAtY = 1.05;
   }
 
@@ -315,11 +336,10 @@ function animate() {
       0.06,
     );
 
-    // Natural breathing motion
+    // Natural vertical breathing motion
     avatar.position.y = -0.32 + Math.sin(elapsedTime * 2) * 0.012;
 
-    // === FREE-HAND NATURAL RESTING POSE ===
-    // Drops straight down on Z without backward twisting on X/Y
+    // === CALIBRATED RESTING ARM POSE ===
     if (leftArmBone) {
       leftArmBone.rotation.x = THREE.MathUtils.degToRad(-20);
       leftArmBone.rotation.y = THREE.MathUtils.degToRad(200);
@@ -331,7 +351,6 @@ function animate() {
       rightArmBone.rotation.z = THREE.MathUtils.degToRad(125);
     }
 
-    // Forearms stay straight down beside thighs
     if (leftForeArmBone) {
       leftForeArmBone.rotation.x = 0.1;
       leftForeArmBone.rotation.y = 0;
