@@ -113,7 +113,9 @@ function createProceduralEyelids(parentHead) {
 }
 
 const loader = new GLTFLoader();
-loader.load("/anbu-avatar.glb", (gltf) => {
+const modelPath = `${import.meta.env.BASE_URL}anbu-avatar.glb`;
+
+loader.load(modelPath, (gltf) => {
   avatar = gltf.scene;
 
   // Hero section setup: Placed on the right side and elevated
